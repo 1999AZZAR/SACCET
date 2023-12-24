@@ -1,32 +1,76 @@
 # RFID Access Control System
 
-This simple RFID Access Control System, built for the ESP8266, combines RFID card detection with server communication for basic access management. The system uses an MFRC522 RFID reader and a 16x2 I2C Liquid Crystal Display. The ESP8266 connects to a Wi-Fi network, reads RFID cards, and communicates with a server to determine access status.
+## Overview
+
+This project implements an RFID access control system using an ESP8266 microcontroller, RFID reader (MFRC522), and LEDs. The system connects to a cloud server to process RFID card data and provides feedback through an LCD display and LEDs.
+
+## Features
+
+- Read RFID card information.
+- Connect to a Wi-Fi network for data communication.
+- Send RFID card data and action (enter/exit) to a cloud server.
+- Display messages on an LCD screen based on server responses.
+- Illuminate LEDs (green for access granted, red for access denied).
+
+## Hardware Requirements
+
+- ESP8266 microcontroller (NodeMCU or similar)
+- MFRC522 RFID reader
+- LCD with I2C interface (e.g., LiquidCrystal_I2C)
+- LEDs (green and red)
+- Resistors, wires, and breadboard
+- Power source (USB or external power supply)
+
+## Wiring
+
+- Connect the RFID reader and LCD to the specified pins on the ESP8266.
+- Connect green and red LEDs to the specified pins for access granted and access denied indications.
 
 ## Setup
 
-1. Replace placeholder values in the code (`your_wifi_ssid`, `your_wifi_password`, `your_cloud_server_address`) with your Wi-Fi and server details.
-2. Adjust pin configurations (`buttonPin`, `lcd`, and `rfidReader`) based on your hardware setup.
+1. Install necessary libraries:
+   - Wire
+   - LiquidCrystal_I2C
+   - ESP8266WiFi
+   - ESP8266HTTPClient
+   - MFRC522
 
-## Functionality
+2. Replace placeholder values in the code:
+   - Set your Wi-Fi credentials (`ssid` and `password`).
+   - Set the cloud server address (`server`).
+   - Adjust pin numbers according to your wiring.
 
-- Detects RFID cards and reads card data.
-- Determines access action (enter/exit) based on button press.
-- Sends RFID card data and action to a server using HTTP POST.
-- Displays user messages on an LCD based on server responses.
-- Supports automatic LCD backlight turn-off after a specified delay.
+3. Upload the code to the ESP8266 using the Arduino IDE or another suitable platform.
 
 ## Usage
 
-1. Upload the code to your ESP8266 device.
-2. Ensure the server specified is accessible.
-3. Connect the hardware components according to pin configurations.
-4. RFID cards trigger access actions, and LCD displays responses.
+1. Power on the system.
+2. Present an RFID card to the reader.
+3. LEDs indicate access status, and LCD displays corresponding messages.
+4. System communicates with the cloud server for access verification.
 
-## Notes
+## Additional Notes
 
-- Ensure proper Wi-Fi connectivity for server communication.
-- Monitor the serial monitor for debugging information.
-- Customize LCD messages, server details, and actions as needed.
-- Further enhancements and integrations can be explored based on project requirements.
+- Ensure that the cloud server is configured to receive and process RFID card data.
+- Customize LCD messages and LED indications based on your requirements.
 
-Feel free to adapt and extend this simple access control system for your specific needs.
+## Flowchart
+
+```mermaid
+graph TD
+  A[Start] -->|Present RFID card| B(Read RFID)
+  B -->|Card present| C{Valid Card?}
+  C -->|Yes| D[Get Action]
+  C -->|No| E[Access Denied]
+  D -->|Send Data| F(Connect to Server)
+  F -->|Successful| G{Access Granted?}
+  G -->|Yes| H[Display Welcome Message]
+  G -->|No| I[Display Denied Message]
+  H --> J{Turn off LCD?}
+  I --> J
+  J -->|Yes| K[Turn off LCD]
+  J -->|No| B
+  K -->|LED Indications| L{End}
+  L -->|Restart| A
+  L -->|Exit| M[End]
+```
